@@ -53,3 +53,24 @@ docker run --restart always -d --net mynet -e REMOTE_HOST=nginx -e REMOTE_PORT=8
 - 使用 https://github.com/vakuum/tcptunnel，c编写，性能会比较好，支持命令行
 - 使用 https://github.com/nuttt/mapport nodejs编写的
 - 使用 https://github.com/HirbodBehnam/PortForwarder go编写，性能较好，配置文件方案
+
+## Dockerfile socat封装的脚本
+```Dockerfile
+FROM alpine:latest
+
+# 定义构建时变量
+ARG DEF_REMOTE_PORT=80
+ARG DEF_LOCAL_PORT=80
+
+# 设置环境变量
+ENV REMOTE_PORT=${DEF_REMOTE_PORT} LOCAL_PORT=${DEF_LOCAL_PORT}
+
+# 安装基础包
+RUN echo "Installing base packages" \
+    && apk add --update --no-cache socat ca-certificates bind-tools \
+    && echo "Removing apk cache" \
+    && rm -rf /var/cache/apk/
+
+# 设置容器启动命令
+CMD ["/bin/sh", "-c", "socat tcp-listen:$LOCAL_PORT,reuseaddr,fork tcp:$REMOTE_HOST:$REMOTE_PORT & pid=$! && trap \"kill $pid\" SIGINT && echo \"Socat started listening on $LOCAL_PORT: Redirecting traffic to $REMOTE_HOST:$REMOTE_PORT ($pid)\" && wait $pid"]
+```
