@@ -30,6 +30,10 @@ curl http://localhost:80/
 
 ## 新解决方案，启动一个新容器，绑定本地主机的80端口，将端口的请求，转发给nginx的内部ip的80端口
 ```shell
-# TODO 还需要开发容器镜像
-docker run --rm -d -p 80:80 --env FORWORD_CONFIG 80:nginx:80 port_fw
+docker run --restart always -d -p 80:80 mattsmc/docker-containers:tcptunnel /root/tcptunnel/tcptunnel --local-port=80 --remote-port=80 --remote-host=nginx --log --stay-alive
 ```
+
+## 技术实现
+- 使用 https://github.com/vakuum/tcptunnel，可以启动一个命令，将tcp端口，转发给其他主机的某个端口
+- 在docker中，转发的主机，可以通过名字和containerid，作为主机的名字解析到ip
+
