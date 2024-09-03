@@ -46,7 +46,7 @@ docker run --restart always -d -e REMOTE_HOST=nginx -e REMOTE_PORT=80 -p 80:80 p
 - 在docker中，转发的主机，可以通过`容器名字`和`containerid`，作为主机的名字解析到ip
 - 确保新的容器，和需要通讯的容器，在同一个`容器网络`中，如果不制定网络，docker run的容器，都在`bridge`网络中
 ### 技术选择
-- 使用 socat 通用工具做转发，封装为容器，phyllisstein/port-forward:latest
+- 使用 socat 通用工具做转发，封装为容器，7.1M，phyllisstein/port-forward:latest
 - 使用 https://github.com/vakuum/tcptunnel，c编写，性能会比较好，支持命令行
 - 使用 https://github.com/nuttt/mapport nodejs编写的
 - 使用 https://github.com/HirbodBehnam/PortForwarder go编写，性能较好，配置文件方案
