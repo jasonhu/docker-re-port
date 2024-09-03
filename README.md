@@ -29,11 +29,16 @@ curl http://localhost:80/
 - 主流办法2：找到nginx容器定义文件，修改定义文件，停止容器，并重启docker引擎，重启容器，参考：https://github.com/williamclarkmcbride/DockerPortRemapper
 
 ## 新解决方案，启动一个新容器，绑定本地主机的80端口，将端口的请求，转发给nginx的内部ip的80端口
+- 第一种解决方案：tcptunnel
 ```shell
 docker run --restart always -d -p 80:80 mattsmc/docker-containers:tcptunnel /root/tcptunnel/tcptunnel --local-port=80 --remote-port=80 --remote-host=nginx --log --stay-alive
+```
+- 第二种解决方案:port-forward
+```shell
+docker run --restart always -d -e REMOTE_HOST=nginx -e REMOTE_PORT=80 -p 80:80 port-forward
 ```
 
 ## 技术实现
 - 使用 https://github.com/vakuum/tcptunnel，可以启动一个命令，将tcp端口，转发给其他主机的某个端口
 - 在docker中，转发的主机，可以通过名字和containerid，作为主机的名字解析到ip
-
+- 使用 https://github.com/nuttt/mapport
